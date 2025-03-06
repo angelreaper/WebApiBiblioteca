@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace BibliotecaApi.Entities
 {
@@ -10,5 +11,8 @@ namespace BibliotecaApi.Entities
         public DateTime DateOfPublish { get; set; }
         public int BookId {  get; set; }// llave foranea
         public Book? Book { get; set; }// propiedad de navegación para el libro
+        // relación ahcia usuarios
+        public required string UserId { get; set; }//llave foranea
+        public IdentityUser? User { get; set; }// relación para el usuario
     }
 }
