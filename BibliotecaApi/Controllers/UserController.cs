@@ -55,7 +55,8 @@ namespace BibliotecaApi.Controllers
         
         }
 
-        [HttpPost]
+        [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<ActionResult<ResponseAutenticateUserDTO>> Login(CredentialUserDTO credentialUserDTO)
         { 
             var user = await userManager.FindByEmailAsync(credentialUserDTO.Email);// validamos si existe el usuario
