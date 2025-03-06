@@ -35,6 +35,7 @@ namespace BibliotecaApi.Controllers
                 return NotFound();
             }
              var comments = await context.Comments
+                    .Include(x => x.User)//agregamos la propiedad de navegación el usuario
                     .Where(x => x.BookId == booKId)
                     .OrderByDescending(x => x.DateOfPublish)
                     .ToListAsync();
@@ -43,7 +44,9 @@ namespace BibliotecaApi.Controllers
         [HttpGet("{id}", Name = "GetComment")]//usamos id sin tipo de dato ya que es un GUID, ya que en si vamos a pasar un string en la URL
         public async Task<ActionResult<CommentDTO>> Get(Guid id)
         { 
-            var comment = await context.Comments.FirstOrDefaultAsync(x => x.Id == id);
+            var comment = await context.Comments
+                                    .Include(x=> x.User)//metemos la propiedad de navegación usuario
+                                    .FirstOrDefaultAsync(x => x.Id == id);
             if (comment is null)
             {
                 return NotFound();

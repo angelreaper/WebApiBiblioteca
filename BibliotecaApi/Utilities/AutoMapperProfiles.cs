@@ -28,7 +28,7 @@ namespace BibliotecaApi.Utilities
             CreateMap<BookCreateDTO, Book>().ForMember(ent => ent.Authors, config => config.MapFrom(dto => dto.AuthorsId.Select(id => new AuthorBook { AuthorId = id })));//hago el mapeo de los ID que estan dentro de dto hacia el campo Authors de la entidad Book
             //Comment
             CreateMap<CommentCreateDTO, Comment>();
-            CreateMap<Comment, CommentDTO>();
+            CreateMap<Comment, CommentDTO>().ForMember(dto=>  dto.UserEmail, config => config.MapFrom(ent=> ent.User!.Email));//mapeamos el dto UserEmail con .Email de la entidad IdentityUser 
             CreateMap<CommentPatchDTO, Comment>().ReverseMap();
 
             //Mapeos de AuthorBooks con BookDTO este es para sacar el listado de libros que le corresponden a un autor
