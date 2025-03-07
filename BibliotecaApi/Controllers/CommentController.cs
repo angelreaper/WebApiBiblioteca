@@ -2,6 +2,7 @@
 using BibliotecaApi.Data;
 using BibliotecaApi.DTOs;
 using BibliotecaApi.Entities;
+using BibliotecaApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
@@ -18,11 +19,13 @@ namespace BibliotecaApi.Controllers
     {
         private readonly ApplicationDBContext context;
         private readonly IMapper mapper;
+        private readonly IUserServices userServices;
 
-        public CommentController( ApplicationDBContext context , IMapper mapper)
+        public CommentController( ApplicationDBContext context , IMapper mapper, IUserServices userServices)
         {
             this.context = context;
             this.mapper = mapper;
+            this.userServices = userServices;
         }
 
         [HttpGet]
@@ -63,10 +66,15 @@ namespace BibliotecaApi.Controllers
             {
                 return NotFound();
             }
-
+            var user = await userServices.GetUser();//sacamos el ususario
+            if (user is null)
+            {
+                return NotFound();
+            }
             var comment = mapper.Map<Comment>(commentCreateDTO);
             comment.BookId = bookId;
             comment.DateOfPublish = DateTime.UtcNow;
+            comment.UserId = user.Id;//asignamos el id del usuario
             context.Add(comment);
             await context.SaveChangesAsync();
             
@@ -91,12 +99,27 @@ namespace BibliotecaApi.Controllers
             {
                 return NotFound();
             }
+
+            var user = await userServices.GetUser();//sacamos el ususario
+            if (user is null)
+            {
+                return NotFound();
+            }
+           
             var commentDB = await context.Comments.FirstOrDefaultAsync(x => x.Id == id);
 
             if (commentDB is null)
             {
                 return NotFound();
             }
+
+            //validamos que no se modifiquen los comentarios de diferentes usuarios
+
+            if (commentDB.UserId != user.Id)// si el comentario que estoy buscando pertenece a otro usuario
+            {
+                return Forbid();//403
+            }
+
 
             var commentPatchDTO = mapper.Map<CommentPatchDTO>(commentDB);
 
@@ -129,11 +152,32 @@ namespace BibliotecaApi.Controllers
                 return NotFound();
             }
 
-            var deleteFields = await context.Comments.Where(x => x.Id == id).ExecuteDeleteAsync(); // eliminamos el registro
-            if (deleteFields == 0)// si esto no devolvio registros
+            var user = await userServices.GetUser();//sacamos el ususario
+            if (user is null)
             {
                 return NotFound();
             }
+
+            //var deleteFields = await context.Comments.Where(x => x.Id == id).ExecuteDeleteAsync(); // eliminamos el registro
+            //if (deleteFields == 0)// si esto no devolvio registros
+            //{
+            //    return NotFound();
+            //}
+            //validamos que el usuario solo borre su comentario
+            var commentDB = await context.Comments.FirstOrDefaultAsync(x=> x.Id == id);
+
+            if (commentDB is null) {
+                return NotFound();  
+            }
+            if (commentDB.UserId != user.Id)// si el usuario que esta modificado es diferente al del usuario que creo el comentario
+            {
+                return Forbid();
+            }
+
+            context.Remove(commentDB);// usamos otra manera de eliminar el registro marcandolo de esta manerta 
+
+            await context.SaveChangesAsync();// confirmamos la ejecución de eliminación
+            
             return NoContent();
         }
 

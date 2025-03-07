@@ -24,15 +24,15 @@ namespace BibliotecaApi.Controllers
         }
 
 
-        //[HttpGet]
-        //public async Task<IEnumerable<BookDTO>> Get()
-        //{
-        //    //return await context.Books.Include(x => x.Author).ToListAsync();
-        //    var books = await context.Books.Include(x => x.Author).ToListAsync();
-        //    var booksDTO = mapper.Map<IEnumerable<BookDTO>>(books);
-        //    return booksDTO;
+        [HttpGet]
+        public async Task<IEnumerable<BookDTO>> Get()
+        {
+            //return await context.Books.Include(x => x.Author).ToListAsync();
+            var books = await context.Books.Include(x => x.Authors).ToListAsync();
+            var booksDTO = mapper.Map<IEnumerable<BookDTO>>(books);
+            return booksDTO;
 
-        //}
+        }
         [HttpGet("{id:int}", Name = "GetBooks")]
         public async Task<ActionResult<BooksWithAuthorsDTO>> Get(int id)
         {

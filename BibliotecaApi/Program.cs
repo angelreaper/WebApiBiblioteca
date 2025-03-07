@@ -1,4 +1,5 @@
 using BibliotecaApi.Data;
+using BibliotecaApi.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -22,6 +23,7 @@ builder.Services.AddIdentityCore<IdentityUser>()
              .AddDefaultTokenProviders();
 builder.Services.AddScoped<UserManager<IdentityUser>>();//manejador de usuarios
 builder.Services.AddScoped<SignInManager<IdentityUser>>();// para autenticar usuarios
+builder.Services.AddTransient<IUserServices,UserServices>();//agregamos el servicio para sacar el usuario
 builder.Services.AddHttpContextAccessor();// para poder acceder al contexto http desde cualquier clase
 // creamos los servicios de autenticación
 builder.Services.AddAuthentication().AddJwtBearer(options =>
