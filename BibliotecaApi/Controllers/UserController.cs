@@ -1,4 +1,5 @@
 ﻿using BibliotecaApi.DTOs;
+using BibliotecaApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,12 +18,14 @@ namespace BibliotecaApi.Controllers
         private readonly UserManager<IdentityUser> userManager;
         private readonly IConfiguration configuration;
         private readonly SignInManager<IdentityUser> signInManager;
+        private readonly IUserServices userServices;
 
-        public UserController( UserManager<IdentityUser> userManager,IConfiguration configuration,SignInManager<IdentityUser> signInManager)
+        public UserController( UserManager<IdentityUser> userManager,IConfiguration configuration,SignInManager<IdentityUser> signInManager, IUserServices userServices)
         {
             this.userManager = userManager;
             this.configuration = configuration;
             this.signInManager = signInManager;
+            this.userServices = userServices;
         }
 
 
@@ -86,6 +89,21 @@ namespace BibliotecaApi.Controllers
 
 
         }
+        [HttpGet("renovate-token")]
+        public async Task<ActionResult<ResponseAutenticateUserDTO>> RenovateToken()
+        {
+            var user = await userServices.GetUser();
+            if (user is null)
+            {
+                return NotFound();
+            }
+            var credentialUserDTO = new CredentialUserDTO { Email = user.Email! };
+            var responsAutentication = await CreateToken(credentialUserDTO);
+            return responsAutentication;
+
+        }
+
+
         //método para creación del token
         private async Task<ResponseAutenticateUserDTO> CreateToken(CredentialUserDTO credentialUserDTO)
         {
