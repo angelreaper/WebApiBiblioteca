@@ -1,4 +1,5 @@
 using BibliotecaApi.Data;
+using BibliotecaApi.Entities;
 using BibliotecaApi.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +19,11 @@ builder.Services.AddControllers().AddNewtonsoftJson();// agregamos el newtonsoft
 builder.Services.AddDbContext<ApplicationDBContext>(options => 
     options.UseSqlServer("name=DefaultConnection"));//llamamos el servicio para el contexto de base de datos y para que pueda ser usado dentro de toda la app
 //creamos el servicio de sistema de usuarios
-builder.Services.AddIdentityCore<IdentityUser>()
+builder.Services.AddIdentityCore<User>()
              .AddEntityFrameworkStores<ApplicationDBContext>()
              .AddDefaultTokenProviders();
-builder.Services.AddScoped<UserManager<IdentityUser>>();//manejador de usuarios
-builder.Services.AddScoped<SignInManager<IdentityUser>>();// para autenticar usuarios
+builder.Services.AddScoped<UserManager<User>>();//manejador de usuarios
+builder.Services.AddScoped<SignInManager<User>>();// para autenticar usuarios
 builder.Services.AddTransient<IUserServices,UserServices>();//agregamos el servicio para sacar el usuario
 builder.Services.AddHttpContextAccessor();// para poder acceder al contexto http desde cualquier clase
 // creamos los servicios de autenticación

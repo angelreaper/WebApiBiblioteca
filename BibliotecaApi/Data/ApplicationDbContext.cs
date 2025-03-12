@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace BibliotecaApi.Data
 {
     //public class ApplicationDBContext : DbContext
-    public class ApplicationDBContext : IdentityDbContext // usamos el sistemas de usuarios de netcore
+    public class ApplicationDBContext : IdentityDbContext<User> // usamos el sistemas de usuarios de netcore//indicamos que ahora la clase User va a representar mi usuario
     {
         public ApplicationDBContext(DbContextOptions options) : base(options)
         {

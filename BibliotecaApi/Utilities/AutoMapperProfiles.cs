@@ -50,7 +50,8 @@ namespace BibliotecaApi.Utilities
             //debemos mapear los campos List<BookCreateDTO> Books del DTO hacia el campo List<AuthorBook> Books de la entidad Author
             CreateMap<BookCreateDTO,AuthorBook>()
                 .ForMember(ent => ent.Book,config => config.MapFrom(dto => new Book { Title = dto.Title } ));// para crear el libro
-
+            // mapeamos entidad de usuario
+            CreateMap<User, UserDTO>();
 
         }
         private string MapNameAndLastName(Author author) => $"{author.Name} {author.LastName}";

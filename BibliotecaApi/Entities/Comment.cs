@@ -13,6 +13,6 @@ namespace BibliotecaApi.Entities
         public Book? Book { get; set; }// propiedad de navegación para el libro
         // relación ahcia usuarios
         public required string UserId { get; set; }//llave foranea
-        public IdentityUser? User { get; set; }// relación para el usuario
+        public User? User { get; set; }// relación para el usuario
     }
 }

@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using BibliotecaApi.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace BibliotecaApi.Services
 {
     public interface IUserServices
     {
-        Task<IdentityUser?> GetUser();
+        Task<User?> GetUser();
     }
 }
