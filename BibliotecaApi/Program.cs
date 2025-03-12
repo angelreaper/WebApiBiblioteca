@@ -10,6 +10,8 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDataProtection();
+
 var allowedOrigin = builder.Configuration.GetSection("AllowedOrigin").Get<string[]>()!;//sacamos los origenes permitidos
 builder.Services.AddCors(options => 
     options.AddDefaultPolicy(optionCORS =>
