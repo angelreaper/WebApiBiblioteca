@@ -12,7 +12,7 @@ namespace BibliotecaApi.Controllers
 {
     [ApiController]
     [Route("api/users")]
-    [Authorize]
+    //[Authorize]
     public class UserController:ControllerBase
     {
         private readonly UserManager<IdentityUser> userManager;
@@ -59,7 +59,7 @@ namespace BibliotecaApi.Controllers
         }
 
         [HttpPost("login")]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public async Task<ActionResult<ResponseAutenticateUserDTO>> Login(CredentialUserDTO credentialUserDTO)
         { 
             var user = await userManager.FindByEmailAsync(credentialUserDTO.Email);// validamos si existe el usuario
@@ -81,6 +81,32 @@ namespace BibliotecaApi.Controllers
 
         }
 
+        [HttpPost("set-admin")]
+        [Authorize(Policy ="isadmin")]
+        public async Task<ActionResult>SetAdmin(EditClaimDTO editClaimDTO)
+        {
+            var user = await userManager.FindByEmailAsync(editClaimDTO.Email);
+            if (user is null) 
+            { 
+                return NotFound();
+            }
+            await userManager.AddClaimAsync(user, new Claim("isadmin", "true"));// nombre del claim y su valor}
+            return NoContent();
+        }
+
+        [HttpPost("remove-admin")]
+        [Authorize(Policy = "isadmin")]
+        public async Task<ActionResult> RemoveAdmin(EditClaimDTO editClaimDTO)
+        {
+            var user = await userManager.FindByEmailAsync(editClaimDTO.Email);
+            if (user is null)
+            {
+                return NotFound();
+            }
+            await userManager.RemoveClaimAsync(user, new Claim("isadmin", "true"));// nombre del claim y su valor}
+            return NoContent();
+        }
+
         private ActionResult ReturnIncorrectLogin()
         {
 
@@ -90,6 +116,7 @@ namespace BibliotecaApi.Controllers
 
         }
         [HttpGet("renovate-token")]
+        [Authorize]// solo los que tengan el token pueden ver el método
         public async Task<ActionResult<ResponseAutenticateUserDTO>> RenovateToken()
         {
             var user = await userServices.GetUser();

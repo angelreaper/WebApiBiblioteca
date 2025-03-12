@@ -11,7 +11,8 @@ namespace BibliotecaApi.Controllers
 {
     [ApiController]
     [Route("api/books")]
-    [Authorize]//protegemos a nivel de controllador el acceso a sus endpoints
+    //[Authorize]//protegemos a nivel de controllador el acceso a sus endpoints
+    [Authorize(Policy = "isadmin")]//protegemos a nivel de controllador el acceso a sus endpoints--solo el admin puede usar estos metodos
     public class BooksController: ControllerBase
     {
         private readonly ApplicationDBContext context;

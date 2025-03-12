@@ -13,7 +13,8 @@ namespace BibliotecaApi.Controllers
 {
     [ApiController]
     [Route("api/authors")]
-    [Authorize]//protegemos a nivel de controllador el acceso a sus endpoints
+    //[Authorize]//protegemos a nivel de controllador el acceso a sus endpoints
+    [Authorize(Policy = "isadmin")]//protegemos a nivel de controllador el acceso a sus endpoints--solo el admin puede usar estos metodos
     public class AuthorsController : ControllerBase
     {
         private readonly ApplicationDBContext context;

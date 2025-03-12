@@ -41,6 +41,10 @@ builder.Services.AddAuthentication().AddJwtBearer(options =>
 
     });
 
+builder.Services.AddAuthorization (options => {
+    options.AddPolicy("isadmin", politic => politic.RequireClaim("isadmin"));
+});
+
 var app = builder.Build();
 
 //área de middelwares
