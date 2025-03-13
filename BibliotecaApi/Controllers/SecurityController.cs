@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.DataProtection;
+﻿using BibliotecaApi.Services;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BibliotecaApi.Controllers
@@ -9,13 +10,25 @@ namespace BibliotecaApi.Controllers
     {
         private IDataProtector protector;
         private ITimeLimitedDataProtector protectorLimited;
+        private readonly IHashService hashService;
 
-        public SecurityController(IDataProtectionProvider protectionProvider)
+        public SecurityController(IDataProtectionProvider protectionProvider,IHashService hashService)
         {
             protector = protectionProvider.CreateProtector("prueba");
             protectorLimited = protector.ToTimeLimitedDataProtector();
+            this.hashService = hashService;
         }
 
+        [HttpGet("hash")]
+        public ActionResult GetHash(string plainText)
+        {
+            var hash1 = hashService.Hash(plainText);
+            var hash2 = hashService.Hash(plainText);
+            var hash3 = hashService.HashEncrypt(plainText, hash2.Sal);//enviamos la sal del anterior hash para probar
+            var result = new { plainText, hash1, hash2, hash3 };
+            return Ok(result);
+
+        }
         [HttpGet("encrypt-limit")]
         public ActionResult EncryptLimited(string plainText)
         {

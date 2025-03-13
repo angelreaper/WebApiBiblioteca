@@ -39,7 +39,9 @@ builder.Services.AddIdentityCore<User>()
 builder.Services.AddScoped<UserManager<User>>();//manejador de usuarios
 builder.Services.AddScoped<SignInManager<User>>();// para autenticar usuarios
 builder.Services.AddTransient<IUserServices,UserServices>();//agregamos el servicio para sacar el usuario
+builder.Services.AddTransient<IHashService, HashService>();// agregamos el servicio de hash
 builder.Services.AddHttpContextAccessor();// para poder acceder al contexto http desde cualquier clase
+
 // creamos los servicios de autenticación
 builder.Services.AddAuthentication().AddJwtBearer(options =>
     {
