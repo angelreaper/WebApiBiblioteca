@@ -18,46 +18,14 @@ namespace BibliotecaApi.Controllers
     {
         private readonly ApplicationDBContext context;
         private readonly IMapper mapper;
-        private ITimeLimitedDataProtector limitDataProtectionProvider;
 
-        public BooksController(ApplicationDBContext context, IMapper mapper ,IDataProtectionProvider dataProtectionProvider)
+        public BooksController(ApplicationDBContext context, IMapper mapper ,)
         {
             this.context = context;
             this.mapper = mapper;
-            limitDataProtectionProvider = dataProtectionProvider.CreateProtector("prueba2").ToTimeLimitedDataProtector();// creamos el protector con limite de tiempo
+            
         }
-        [HttpGet("list/get-token")]
-        public ActionResult GetTokenList()
-        { 
-            var plainText = Guid.NewGuid().ToString();//sacamos un texto aleatorio
-            var token = limitDataProtectionProvider.Protect(plainText,lifetime:TimeSpan.FromSeconds(30));
-            var url = Url.RouteUrl("GetListWithToken",new {token},"https");//construyo la url con el token de acceso a la ruta
-            return Ok(new {url});//devuelvo la ruta protegida con el token de acceso
-
-        }
-        [HttpGet("list/{token}",Name = "GetListWithToken")]
         [AllowAnonymous]
-        public async Task<ActionResult> GetListWithToken(string token)
-        {
-            try
-            {
-                limitDataProtectionProvider.Unprotect(token);//valido si el token esta todavía activo
-            }
-            catch 
-            {
-                ModelState.AddModelError(nameof(token), "El Token ha expirado");// de lo contrario ya no podre ver los datos  y lanzare una una exepción
-                return ValidationProblem();
-                
-            }
-
-            var books = await context.Books.Include(x => x.Authors).ToListAsync();
-            var booksDTO = mapper.Map<IEnumerable<BookDTO>>(books);
-            return Ok(booksDTO);
-
-        }
-
-
-
         public async Task<IEnumerable<BookDTO>> Get()
         {
             //return await context.Books.Include(x => x.Author).ToListAsync();
@@ -67,6 +35,7 @@ namespace BibliotecaApi.Controllers
 
         }
         [HttpGet("{id:int}", Name = "GetBooks")]
+        [AllowAnonymous]
         public async Task<ActionResult<BooksWithAuthorsDTO>> Get(int id)
         {
             var book = await context.Books

@@ -49,6 +49,7 @@ namespace BibliotecaApi.Controllers
         //    return await context.Authors.Include(x => x.Books).FirstAsync();
         //}
         [HttpGet("{id:int}",Name ="GetAuthors")]
+        [AllowAnonymous]
         public async Task<ActionResult<AuthorsWithBooksDTO>> Get(int id)
         { 
             var author = await context.Authors

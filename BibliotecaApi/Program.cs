@@ -39,7 +39,6 @@ builder.Services.AddIdentityCore<User>()
 builder.Services.AddScoped<UserManager<User>>();//manejador de usuarios
 builder.Services.AddScoped<SignInManager<User>>();// para autenticar usuarios
 builder.Services.AddTransient<IUserServices,UserServices>();//agregamos el servicio para sacar el usuario
-builder.Services.AddTransient<IHashService, HashService>();// agregamos el servicio de hash
 builder.Services.AddHttpContextAccessor();// para poder acceder al contexto http desde cualquier clase
 
 // creamos los servicios de autenticación
@@ -67,12 +66,7 @@ var app = builder.Build();
 //área de middelwares
 
 //agregamos una cabecera personalizada
-app.Use(async (context, next) =>
-{
-    context.Response.Headers.Append("mi-cabecera", "valor");
-    await next();
-});
-      
+
 app.UseCors();// indicamos que use cors
 app.MapControllers();
 

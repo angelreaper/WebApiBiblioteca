@@ -29,6 +29,7 @@ namespace BibliotecaApi.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<List<CommentDTO>>> Get(int booKId)
         {
             var existBook = await context.Books.AnyAsync(x => x.Id == booKId);
@@ -45,6 +46,7 @@ namespace BibliotecaApi.Controllers
             return mapper.Map<List<CommentDTO>>(comments);
         }
         [HttpGet("{id}", Name = "GetComment")]//usamos id sin tipo de dato ya que es un GUID, ya que en si vamos a pasar un string en la URL
+        [AllowAnonymous]
         public async Task<ActionResult<CommentDTO>> Get(Guid id)
         { 
             var comment = await context.Comments
