@@ -19,12 +19,13 @@ namespace BibliotecaApi.Controllers
         private readonly ApplicationDBContext context;
         private readonly IMapper mapper;
 
-        public BooksController(ApplicationDBContext context, IMapper mapper ,)
+        public BooksController(ApplicationDBContext context, IMapper mapper)
         {
             this.context = context;
             this.mapper = mapper;
             
         }
+        [HttpGet]
         [AllowAnonymous]
         public async Task<IEnumerable<BookDTO>> Get()
         {

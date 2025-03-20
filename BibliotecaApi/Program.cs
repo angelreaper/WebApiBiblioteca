@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -61,10 +62,55 @@ builder.Services.AddAuthorization (options => {
     options.AddPolicy("isadmin", politic => politic.RequireClaim("isadmin"));
 });
 
+builder.Services.AddSwaggerGen(options =>
+{ 
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Biblioteca Api",
+        Description = "Este es un web api para una biblioteca",
+        Contact = new Microsoft.OpenApi.Models.OpenApiContact
+        {
+            Email = "pepito@hotmail.com",
+            Name = "Pepito Perez",
+            Url = new Uri("http://pagina.prueba")
+        },
+        License = new Microsoft.OpenApi.Models.OpenApiLicense
+        { 
+            Name="MIT",
+            Url= new Uri("https://opensource.org/license/mit/")
+        }
+    });
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header
+    });
+
+    options.AddSecurityRequirement( new OpenApiSecurityRequirement {
+        { 
+            new OpenApiSecurityScheme
+            { 
+                Reference = new OpenApiReference
+                { 
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[]{ }
+        }
+    });
+});
+
+
 var app = builder.Build();
 
 //área de middelwares
 
+app.UseSwagger();
+app.UseSwaggerUI();
 //agregamos una cabecera personalizada
 
 app.UseCors();// indicamos que use cors
